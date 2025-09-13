@@ -1,148 +1,167 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full space-y-8">
-      <!-- Logo and Header -->
-      <div class="text-center">
-        <div class="mx-auto h-16 w-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center">
-          <span class="text-white font-bold text-2xl">A</span>
-        </div>
-        <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
-          Sign in to Analytics
-        </h2>
-        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
-          Access your real-time dashboard
-        </p>
-      </div>
-
-      <!-- Login Form -->
-      <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <div class="space-y-4">
-          <!-- Username Field -->
-          <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Username
-            </label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <UserIcon class="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="username"
-                v-model="form.username"
-                type="text"
-                required
-                class="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-colors duration-200"
-                placeholder="Enter your username"
-                :disabled="loading"
-              />
-            </div>
-          </div>
-
-          <!-- Password Field -->
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Password
-            </label>
-            <div class="relative">
-              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <LockClosedIcon class="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="password"
-                v-model="form.password"
-                :type="showPassword ? 'text' : 'password'"
-                required
-                class="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm transition-colors duration-200"
-                placeholder="Enter your password"
-                :disabled="loading"
-              />
-              <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                <button
-                  type="button"
-                  @click="showPassword = !showPassword"
-                  class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none"
-                  :disabled="loading"
-                >
-                  <EyeIcon v-if="showPassword" class="h-5 w-5" />
-                  <EyeSlashIcon v-else class="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Remember Me -->
-          <div class="flex items-center justify-between">
-            <div class="flex items-center">
-              <input
-                id="remember-me"
-                v-model="form.rememberMe"
-                type="checkbox"
-                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                :disabled="loading"
-              />
-              <label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                Remember me
-              </label>
-            </div>
-            <div class="text-sm">
-              <a href="#" class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200">
-                Forgot password?
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Error Message -->
-        <div v-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <div class="flex">
-            <ExclamationTriangleIcon class="h-5 w-5 text-red-400 flex-shrink-0" />
-            <div class="ml-3">
-              <p class="text-sm text-red-800 dark:text-red-200">{{ error }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
+  <div class="min-h-screen flex bg-gray-50 dark:bg-gray-900">
+    <!-- Left side - Login Form -->
+    <div class="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-20 xl:px-24">
+      <div class="mx-auto w-full max-w-sm lg:w-96">
+        <!-- Header -->
         <div>
-          <button
-            type="submit"
-            :disabled="loading || !form.username || !form.password"
-            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
-          >
-            <span class="absolute left-0 inset-y-0 flex items-center pl-3" v-if="loading">
-              <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            </span>
-            {{ loading ? 'Signing in...' : 'Sign in' }}
-          </button>
-        </div>
-
-        <!-- Demo Credentials -->
-        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-          <div class="flex">
-            <InformationCircleIcon class="h-5 w-5 text-blue-400 flex-shrink-0" />
-            <div class="ml-3">
-              <p class="text-sm text-blue-800 dark:text-blue-200">
-                <strong>Demo Credentials:</strong><br>
-                Username: admin<br>
-                Password: admin123
-              </p>
-            </div>
+          <div class="h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center">
+            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
           </div>
-        </div>
-
-        <!-- Sign Up Link -->
-        <div class="text-center">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            Don't have an account?
-            <router-link
-              to="/register"
-              class="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 transition-colors duration-200"
-            >
-              Sign up
-            </router-link>
+          <h2 class="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+            Sign in to your account
+          </h2>
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Welcome back to Analytics Dashboard
           </p>
         </div>
-      </form>
+
+        <!-- Demo Credentials Card -->
+        <div class="mt-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-blue-800 dark:text-blue-200">
+                Demo Credentials
+              </h3>
+              <div class="mt-1 text-sm text-blue-700 dark:text-blue-300">
+                <p><strong>Username:</strong> admin</p>
+                <p><strong>Password:</strong> admin123</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
+          <div class="space-y-5">
+            <!-- Username Field -->
+            <div>
+              <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Username
+              </label>
+              <div class="mt-1">
+                <input
+                  id="username"
+                  v-model="form.username"
+                  type="text"
+                  required
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter username"
+                  :disabled="loading"
+                />
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div>
+              <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                Password
+              </label>
+              <div class="mt-1">
+                <input
+                  id="password"
+                  v-model="form.password"
+                  type="password"
+                  required
+                  class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Enter password"
+                  :disabled="loading"
+                />
+              </div>
+            </div>
+
+            <!-- Remember Me -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <input
+                  id="remember-me"
+                  v-model="form.rememberMe"
+                  type="checkbox"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  :disabled="loading"
+                />
+                <label for="remember-me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                  Remember me
+                </label>
+              </div>
+              <div class="text-sm">
+                <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
+                  Forgot password?
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div v-if="error" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-3">
+            <p class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+          </div>
+
+          <!-- Submit Button -->
+          <div>
+            <button
+              type="submit"
+              :disabled="loading || !form.username || !form.password"
+              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span v-if="loading" class="absolute left-0 inset-y-0 flex items-center pl-3">
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </span>
+              {{ loading ? 'Signing in...' : 'Sign in' }}
+            </button>
+          </div>
+
+          <!-- Register Link -->
+          <div class="text-center">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              Don't have an account?
+              <router-link to="/register" class="font-medium text-blue-600 hover:text-blue-500">
+                Sign up
+              </router-link>
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right side - Branding -->
+    <div class="hidden lg:block relative w-0 flex-1">
+      <div class="absolute inset-0 h-full w-full bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 flex items-center justify-center">
+        <div class="text-center text-white px-12">
+          <h1 class="text-4xl font-bold mb-4">Analytics Dashboard</h1>
+          <p class="text-xl opacity-90 mb-8">Real-time insights for your business</p>
+          <div class="grid grid-cols-1 gap-4 max-w-sm mx-auto text-left">
+            <div class="flex items-center">
+              <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>Real-time data visualization</span>
+            </div>
+            <div class="flex items-center">
+              <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>Advanced analytics tools</span>
+            </div>
+            <div class="flex items-center">
+              <svg class="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+              </svg>
+              <span>Team collaboration</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -150,15 +169,6 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import {
-  UserIcon,
-  LockClosedIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationTriangleIcon,
-  InformationCircleIcon
-} from '@heroicons/vue/24/outline'
-
 import { useAuthStore } from '@/stores/auth'
 import { useUIStore } from '@/stores/ui'
 
@@ -169,7 +179,6 @@ const uiStore = useUIStore()
 // Reactive state
 const loading = ref(false)
 const error = ref('')
-const showPassword = ref(false)
 
 const form = reactive({
   username: '',
